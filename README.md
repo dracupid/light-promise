@@ -38,10 +38,12 @@ p.then(function(){});
 
 ## API
 - Object Methods
-`new Promise(Function<Function resolve, Function reject> resolver)`
-`.then([Function onFulfilled] [, Function onRejected])`
-`.catch(Function onRejected)`
+
+`new Promise(Function<Function resolve, Function reject> resolver)`<br/>
+`.then([Function onFulfilled] [, Function onRejected])`<br/>
+`.catch(Function onRejected)`<br/>
 - Static Methods
-`Promise.resolve(Dynamic value)`
-`Promise.reject(Dynamic reason)`
-`Promise.all(Array promises)`
+
+`Promise.resolve(Dynamic value)`<br/>
+`Promise.reject(Dynamic reason)`<br/>
+`Promise.all(Array promises)`<br/>
