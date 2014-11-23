@@ -1,0 +1,23 @@
+{
+  "name": "light-promise",
+  "version": "0.0.1",
+  "description": "A Super Lightweight promise/A+ implementation",
+  "main": "light-promise.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dracupid/light-promise.git"
+  },
+  "keywords": [
+    "promise",
+    "promse/A+"
+  ],
+  "author": "Dracupid",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dracupid/light-promise/issues"
+  },
+  "homepage": "https://github.com/dracupid/light-promise"
+}
