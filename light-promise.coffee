@@ -16,9 +16,9 @@
 	    constructor: (resolver)->
 	        @state = 'pending'
 	        try
-	        	resolver and resolver.call null, @_resolve, @_reject
+	        	resolver and resolver.call null, @resolve, @reject
 	        catch err
-	        	@._reject err
+	        	@.reject err
 	        @
 	    then: (@onFulfilled, @onRejected)->
 	        @_next = new Promise()
@@ -28,11 +28,11 @@
 	        @_next
 	    catch: (onRejected)->
 	        @['then'] null, onRejected
-	    _resolve: (@value)=>
+	    resolve: (@value)=>
 	        @state = 'fulfilled'
 	        @_fireResolve()
 	        @
-	    _reject: (@reason)=>
+	    reject: (@reason)=>
 	        @state = 'rejected'
 	        @_fireReject()
 	        @
@@ -40,27 +40,27 @@
 	        try
 	            if @onFulfilled
 	                rs = @onFulfilled.call null, @value
-	                if @_next then _resolveX @_next, rs
-	            else @_next?._resolve @value
+	                if @_next then resolveX @_next, rs
+	            else @_next?.resolve @value
 	        catch e
-	            @_next?._reject e
+	            @_next?.reject e
 	    _fireReject: ()->
 	        try
 	            if @onRejected
 	                rs = @onRejected.call null, @reason
-	                if @_next then _resolveX @_next, rs
-	            else @_next?._reject @reason
+	                if @_next then resolveX @_next, rs
+	            else @_next?.reject @reason
 	        catch e
-	            @_next?._reject e
+	            @_next?.reject e
 
-	_resolveX = (promise, x)->
+	resolveX = (promise, x)->
 	    if x instanceof Promise
 	        switch x.state
-	            when 'pending' then x.then promise._resolve, promise._reject
-	            when 'fulfilled' then promise._resolve x.value
-	            when 'rejected' then promise._reject x.reason
+	            when 'pending' then x.then promise.resolve, promise.reject
+	            when 'fulfilled' then promise.resolve x.value
+	            when 'rejected' then promise.reject x.reason
 	    else
-	        promise._resolve x
+	        promise.resolve x
 	    promise
 
 	Promise.resolve = (value)->
@@ -79,7 +79,7 @@
 	    for p, i in promises
 	        p.then (rs)->
 	            result[i] = rs
-	            if ++finish is promise.length and !done
+	            if ++finish is promises.length and not done
 	                promise.resolve result
 	        , (err)->
 	            done = true

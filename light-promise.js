@@ -23,18 +23,18 @@
       }
     }
   })(this, function(root) {
-    var Promise, _resolveX;
+    var Promise, resolveX;
     Promise = (function() {
       function Promise(resolver) {
-        this._reject = __bind(this._reject, this);
-        this._resolve = __bind(this._resolve, this);
+        this.reject = __bind(this.reject, this);
+        this.resolve = __bind(this.resolve, this);
         var err;
         this.state = 'pending';
         try {
-          resolver && resolver.call(null, this._resolve, this._reject);
+          resolver && resolver.call(null, this.resolve, this.reject);
         } catch (_error) {
           err = _error;
-          this._reject(err);
+          this.reject(err);
         }
         this;
       }
@@ -57,14 +57,14 @@
         return this['then'](null, onRejected);
       };
 
-      Promise.prototype._resolve = function(value) {
+      Promise.prototype.resolve = function(value) {
         this.value = value;
         this.state = 'fulfilled';
         this._fireResolve();
         return this;
       };
 
-      Promise.prototype._reject = function(reason) {
+      Promise.prototype.reject = function(reason) {
         this.reason = reason;
         this.state = 'rejected';
         this._fireReject();
@@ -77,14 +77,14 @@
           if (this.onFulfilled) {
             rs = this.onFulfilled.call(null, this.value);
             if (this._next) {
-              return _resolveX(this._next, rs);
+              return resolveX(this._next, rs);
             }
           } else {
-            return (_ref = this._next) != null ? _ref._resolve(this.value) : void 0;
+            return (_ref = this._next) != null ? _ref.resolve(this.value) : void 0;
           }
         } catch (_error) {
           e = _error;
-          return (_ref1 = this._next) != null ? _ref1._reject(e) : void 0;
+          return (_ref1 = this._next) != null ? _ref1.reject(e) : void 0;
         }
       };
 
@@ -94,34 +94,34 @@
           if (this.onRejected) {
             rs = this.onRejected.call(null, this.reason);
             if (this._next) {
-              return _resolveX(this._next, rs);
+              return resolveX(this._next, rs);
             }
           } else {
-            return (_ref = this._next) != null ? _ref._reject(this.reason) : void 0;
+            return (_ref = this._next) != null ? _ref.reject(this.reason) : void 0;
           }
         } catch (_error) {
           e = _error;
-          return (_ref1 = this._next) != null ? _ref1._reject(e) : void 0;
+          return (_ref1 = this._next) != null ? _ref1.reject(e) : void 0;
         }
       };
 
       return Promise;
 
     })();
-    _resolveX = function(promise, x) {
+    resolveX = function(promise, x) {
       if (x instanceof Promise) {
         switch (x.state) {
           case 'pending':
-            x.then(promise._resolve, promise._reject);
+            x.then(promise.resolve, promise.reject);
             break;
           case 'fulfilled':
-            promise._resolve(x.value);
+            promise.resolve(x.value);
             break;
           case 'rejected':
-            promise._reject(x.reason);
+            promise.reject(x.reason);
         }
       } else {
-        promise._resolve(x);
+        promise.resolve(x);
       }
       return promise;
     };
@@ -147,7 +147,7 @@
         p = promises[i];
         p.then(function(rs) {
           result[i] = rs;
-          if (++finish === promise.length && !done) {
+          if (++finish === promises.length && !done) {
             return promise.resolve(result);
           }
         }, function(err) {
