@@ -9,7 +9,7 @@ A Super Lightweight [Promise/A+](https://promisesaplus.com) implementation. Less
     - Any Promises/A+-compliant thenable objects is not acceptted.
 - New features may be or may never be added.
 
-***However, it works for most of the time, and I think that's enough.***
+***However, it works well for most of the scene, and I think that's enough.***
 
 ## Usage
 ### Node
@@ -37,13 +37,26 @@ p.then(function(){});
 > You can also use light-promise with [requirejs](http://requirejs.org/) or [browserify](http://browserify.org/) as well.
 
 ## API
+
 - Object Methods
 
 `new Promise(Function<Function resolve, Function reject> resolver)`<br/>
 `.then([Function onFulfilled] [, Function onRejected])`<br/>
 `.catch(Function onRejected)`<br/>
+
 - Static Methods
 
 `Promise.resolve(Dynamic value)`<br/>
 `Promise.reject(Dynamic reason)`<br/>
-`Promise.all(Array promises)`<br/>
+`Promise.all(Array promises)` --extended method<br/>
+
+## Test
+
+If you don't hava a `mocha` installed globally, please run
+```
+npm i -g mocha
+```
+then, just run
+```
+mocha
+```
