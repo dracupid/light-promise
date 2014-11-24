@@ -25,11 +25,17 @@
   })(this, function(root) {
     var Promise, _resolveX;
     Promise = (function() {
-      function Promise(fun) {
+      function Promise(resolver) {
         this._reject = __bind(this._reject, this);
         this._resolve = __bind(this._resolve, this);
+        var err;
         this.state = 'pending';
-        fun && fun(this._resolve, this._reject);
+        try {
+          resolver && resolver.call(null, this._resolve, this._reject);
+        } catch (_error) {
+          err = _error;
+          this._reject(err);
+        }
         this;
       }
 
@@ -74,11 +80,11 @@
               return _resolveX(this._next, rs);
             }
           } else {
-            return (_ref = this._next) != null ? _ref.resolve(this.value) : void 0;
+            return (_ref = this._next) != null ? _ref._resolve(this.value) : void 0;
           }
         } catch (_error) {
           e = _error;
-          return (_ref1 = this._next) != null ? _ref1.reject(e) : void 0;
+          return (_ref1 = this._next) != null ? _ref1._reject(e) : void 0;
         }
       };
 
@@ -91,11 +97,11 @@
               return _resolveX(this._next, rs);
             }
           } else {
-            return (_ref = this._next) != null ? _ref.reject(this.reason) : void 0;
+            return (_ref = this._next) != null ? _ref._reject(this.reason) : void 0;
           }
         } catch (_error) {
           e = _error;
-          return (_ref1 = this._next) != null ? _ref1.reject(e) : void 0;
+          return (_ref1 = this._next) != null ? _ref1._reject(e) : void 0;
         }
       };
 
@@ -106,16 +112,16 @@
       if (x instanceof Promise) {
         switch (x.state) {
           case 'pending':
-            x.then(promise.resolve, promise.reject);
+            x.then(promise._resolve, promise._reject);
             break;
           case 'fulfilled':
-            promise.resolve(x.value);
+            promise._resolve(x.value);
             break;
           case 'rejected':
-            promise.reject(x.reason);
+            promise._reject(x.reason);
         }
       } else {
-        promise.resolve(x);
+        promise._resolve(x);
       }
       return promise;
     };

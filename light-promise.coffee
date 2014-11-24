@@ -15,7 +15,10 @@
 	class Promise
 	    constructor: (resolver)->
 	        @state = 'pending'
-	        resolver and resolver @_resolve, @_reject
+	        try
+	        	resolver and resolver.call null, @_resolve, @_reject
+	        catch err
+	        	@._reject err
 	        @
 	    then: (@onFulfilled, @onRejected)->
 	        @_next = new Promise()
@@ -38,26 +41,26 @@
 	            if @onFulfilled
 	                rs = @onFulfilled.call null, @value
 	                if @_next then _resolveX @_next, rs
-	            else @_next?.resolve @value
+	            else @_next?._resolve @value
 	        catch e
-	            @_next?.reject e
+	            @_next?._reject e
 	    _fireReject: ()->
 	        try
 	            if @onRejected
 	                rs = @onRejected.call null, @reason
 	                if @_next then _resolveX @_next, rs
-	            else @_next?.reject @reason
+	            else @_next?._reject @reason
 	        catch e
-	            @_next?.reject e
+	            @_next?._reject e
 
 	_resolveX = (promise, x)->
 	    if x instanceof Promise
 	        switch x.state
-	            when 'pending' then x.then promise.resolve, promise.reject
-	            when 'fulfilled' then promise.resolve x.value
-	            when 'rejected' then promise.reject x.reason
+	            when 'pending' then x.then promise._resolve, promise._reject
+	            when 'fulfilled' then promise._resolve x.value
+	            when 'rejected' then promise._reject x.reason
 	    else
-	        promise.resolve x
+	        promise._resolve x
 	    promise
 
 	Promise.resolve = (value)->
