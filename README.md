@@ -1,22 +1,18 @@
-# Light-Promise
-A Super Lightweight [Promise/A+](https://promisesaplus.com) implementation. Less than 80 lines coffee-script, less than 3kb after [uglified](https://github.com/mishoo/UglifyJS/), less than 1kb after g-zipped. 
+# light-promise
+A Super Lightweight [Promise/A+](https://promisesaplus.com) implementation, tested by [promises-tests](https://github.com/promises-aplus/promises-tests)
 
-## Notice
-- This implementation is just a **partially** implementation.
-- Follow features are not supported:
-    - Type checking. You are supposed to make sure that your parameters are of correct type or just null value.
-    - `Then` can be called only once for the same Promise object.
-    - Any Promises/A+-compliant thenable objects is not acceptted.
-- New features may be or may never be added.
+> TODO: Test case 2.3.3 failed by now.
 
-***However, it works well for most of the scene, and I think that's enough.***
+[![NPM version](https://badge.fury.io/js/light-promise.svg)](http://badge.fury.io/js/light-promise)
+[![Build Status](https://travis-ci.org/dracupid/light-promise.svg)](https://travis-ci.org/dracupid/light-promise)
+[![Build status](https://ci.appveyor.com/api/projects/status/github/dracupid/light-promise?svg=true)](https://ci.appveyor.com/project/dracupid/light-promise)
 
 ## Usage
-### Node
+### Node/io
 Run `npm install -S light-promise` in command line.
 Then,
 ```javascript
-var Promise = require('light-promise')
+var Promise = require('light-promise');
 ```
 ### Browser
 Download the light-promise.min.js file.
@@ -24,9 +20,9 @@ Download the light-promise.min.js file.
 
 - Add a script tag in your HTML file
 ```html
-<script type="text/javascript" src="/light-promise.min.js"></script>
+<script type="text/javascript" src="/light-promise.js"></script>
 ```
--  The global variables `Promise` and `light_promise` are available after the above script tag. 
+-  The global variables `Promise` is available after the above script tag.
     - Notice that if the browser supports [Promise](http://devdocs.io/javascript/global_objects/promise) natively, Promise variable will keep to be the native one, which I recommand you to use.
 ```javascript
 var p = new Promise(function(resolve, reject){
@@ -51,12 +47,6 @@ p.then(function(){});
 `Promise.all(Array promises)` --extended method<br/>
 
 ## Test
-
-If you don't hava a `mocha` installed globally, please run
 ```
-npm i -g mocha
-```
-then, just run
-```
-mocha
+npm test
 ```
