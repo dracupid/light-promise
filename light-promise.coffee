@@ -3,6 +3,7 @@
     @author: Draucpid
 ###
 isFun = (a) -> a and a.constructor.name is "Function"
+if process?.nextTick then setTimeout = process.nextTick
 
 ((root, factory) ->
     if typeof module is "object" && typeof module.exports is "object"
