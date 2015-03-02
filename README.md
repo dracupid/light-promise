@@ -16,6 +16,7 @@ var Promise = require('light-promise');
 ```
 ### Browser
 Download the light-promise.min.js file.
+
 > Light-promise is also a [bower](http://bower.io/) package.
 
 - Add a script tag in your HTML file
