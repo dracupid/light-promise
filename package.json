@@ -2,9 +2,10 @@
   "name": "light-promise",
   "version": "0.0.2",
   "description": "A Super Lightweight promise/A+ implementation",
-  "main": "light-promise.js",
+  "main": "dist/light-promise.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha test/basic.js && node test/promiseAPlus.js",
+    "prepublish": "no b"
   },
   "repository": {
     "type": "git",
@@ -14,10 +15,20 @@
     "promise",
     "promise/A+"
   ],
+  "files": [
+    "dist"
+  ],
   "author": "Dracupid",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/dracupid/light-promise/issues"
   },
-  "homepage": "https://github.com/dracupid/light-promise"
+  "homepage": "https://github.com/dracupid/light-promise",
+  "devDependencies": {
+    "coffee-script": "^1.9.1",
+    "coffeelint": "^1.9.2",
+    "mocha": "^2.1.0",
+    "nokit": "^0.5.4",
+    "promises-aplus-tests": "^2.1.0"
+  }
 }
