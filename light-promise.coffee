@@ -10,7 +10,7 @@ isFun = (a) -> a and a.constructor.name is "Function"
     else if typeof define is 'function' and define.amd
         define 'light-promise', [], -> factory root
     else
-        if not root.Promise then root.Promise = factory root
+        root.Promise ?= factory root
 ) this, (root) ->
     resolveX = (promise, x) ->
         if promise is x
