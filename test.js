@@ -1,4 +1,5 @@
 var assert = require("assert");
+require('coffee-script/register');
 var Promise = require("./light-promise")
 describe('Promise', function() {
     describe('#constructor', function() {
@@ -198,7 +199,7 @@ describe('Promise', function() {
                 done()
             })
         })
-        
+
     })
     describe('#Promise.all', function() {
         it('should resolve an array after all promises are resolved', function(done) {
