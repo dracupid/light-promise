@@ -1,6 +1,6 @@
 var assert = require("assert");
 require('coffee-script/register');
-var Promise = require("./light-promise")
+var Promise = require("../light-promise")
 describe('Promise', function() {
     describe('#constructor', function() {
         it('should return an object with method then and catch', function() {
