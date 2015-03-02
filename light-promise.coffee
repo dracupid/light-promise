@@ -4,14 +4,14 @@
 ###
 isFun = (a) -> a and a.constructor.name is "Function"
 
-((root, factory)->
+((root, factory) ->
     if typeof module is "object" && typeof module.exports is "object"
         module.exports = factory root
     else if typeof define is 'function' and define.amd
         define 'light-promise', [], -> factory root
     else
         if not root.Promise then root.Promise = factory root
-) this, (root)->
+) this, (root) ->
     resolveX = (promise, x) ->
         if promise is x
             promise.reject new TypeError()
@@ -70,7 +70,7 @@ isFun = (a) -> a and a.constructor.name is "Function"
             @state = 'rejected'
             @_fireReject()
             @
-        _fireResolve: () =>
+        _fireResolve: =>
             setTimeout =>
                 next = null
                 _onFullfilled = [].concat @onFulfilled
@@ -92,7 +92,7 @@ isFun = (a) -> a and a.constructor.name is "Function"
                     for ful in _onFullfilled
                         ful.next.resolve @value
             , 0
-        _fireReject: () =>
+        _fireReject: =>
             setTimeout =>
                 next = null
                 _onRejected = [].concat @onRejected
@@ -130,12 +130,12 @@ isFun = (a) -> a and a.constructor.name is "Function"
             finish = 0
             done = false
             for p, i in promises
-                do (i)->
-                    p.then (rs)->
+                do (i) ->
+                    p.then (rs) ->
                         result[i] = rs
                         if ++finish is promises.length and not done
                             promise.resolve result
-                    , (err)->
+                    , (err) ->
                         done = true
                         promise.reject err
             promise
