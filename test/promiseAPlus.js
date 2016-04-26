@@ -17,6 +17,6 @@ Promise.deferred = function(){
 }
 
 var promisesAplusTests = require("promises-aplus-tests");
-promisesAplusTests(Promise, {grep: /(2.(1|2).\d)|(2.3.[124])/}, function (err) {});
+promisesAplusTests(Promise, {grep: "`y` is an already-fulfilled promise for a synchronously-"}, function (err) {});
 //2.3.3 not passed
 

@@ -2,8 +2,28 @@
     A Super Lightweight promise/A+ implementation
     @author: Draucpid
 ###
-isFun = (a) -> a and a.constructor.name is "Function"
+"use strict"
+
+isFun = (a) -> typeof a is 'function'
+isObj = (a) -> a and typeof a is 'object'
+
 if process?.nextTick then setTimeout = process.nextTick
+
+redStart = '\u001b[31m'
+redEnd = '\u001b[39m'
+
+unCaughtError = (promise) ->
+    setTimeout ->
+        if promise.state is STATE.REJECTED and not promise.onRejected.length
+            reason = promise.reason.stack or promise.reason
+            console.error redStart, "Possibly unhandled error: ", reason, redEnd
+            throw promise.reason
+    , 0
+
+STATE =
+    PENDING: 0
+    FULFILLED: 2
+    REJECTED: 4
 
 ((root, factory) ->
     if typeof module is "object" && typeof module.exports is "object"
@@ -12,31 +32,76 @@ if process?.nextTick then setTimeout = process.nextTick
         define 'light-promise', [], -> factory root
     else
         root.Promise ?= factory root
-) this, (root) ->
+) @, (root) ->
+    # 2.3 The Promise Resolution Procedure
     resolveX = (promise, x) ->
+        # 2.3.1 If promise and x refer to the same object, reject promise with a TypeError as the reason
         if promise is x
             promise.reject new TypeError()
+        # 2.3.2 If x is a promise, adopt its state:
         else if x instanceof Promise
             switch x.state
-                when 'pending' then x.then promise.resolve, promise.reject
-                when 'fulfilled' then promise.resolve x.value
-                when 'rejected' then promise.reject x.reason
+                # 2.3.2.1 If x is pending, promise must remain pending until x is fulfilled or rejected.
+                when STATE.PENDING then x.then promise.resolve, promise.reject
+                # 2.3.2.2 If/when x is fulfilled, fulfill promise with the same value.
+                when STATE.FULFILLED then promise.resolve x.value
+                # 2.3.2.3 If/when x is rejected, reject promise with the same reason.
+                when STATE.REJECTED then promise.reject x.reason
+        # 2.3.3 Otherwise, if x is an object or function,
+        else if isObj(x) or isFun(x)
+            # 2.3.3.1 Let then be x.then.
+            try xThen = x.then
+            # 2.3.3.2 If retrieving the property x.then results in a thrown exception e, reject promise with e as the reason.
+            catch e
+                return promise.reject e
+
+            # 2.3.3.3 If then is a function, call it with x as this, first argument resolvePromise,
+            # and second argument rejectPromise, where:
+            if isFun xThen
+                # 2.3.3.3.1 If/when resolvePromise is called with a value y, run [[Resolve]](promise, y).
+                # 2.3.3.3.2 If/when rejectPromise is called with a reason r, reject promise with r.
+                # 2.3.3.3.3 If both resolvePromise and rejectPromise are called,
+                #           or multiple calls to the same argument are made,
+                #           the first call takes precedence, and any further calls are ignored.
+                called = no
+                resolvePromise = (y) ->
+                    if called then return
+                    called = yes
+                    resolveX promise, y
+                rejectPromise = (r) ->
+                    if called then return
+                    called = yes
+                    promise.reject r
+
+                try xThen.call x, resolvePromise, rejectPromise
+                # 2.3.3.3.4 If calling then throws an exception e,
+                catch e
+                    # 2.3.3.3.4.1 If resolvePromise or rejectPromise have been called, ignore it.
+                    if called then return
+                    # 2.3.3.3.4.2 Otherwise, reject promise with e as the reason.
+                    else promise.reject e
+
+            # 2.3.3.4 If then is not a function, fulfill promise with x.
+            else
+                promise.resolve x
+        # 2.3.4 If x is not an object or function, fulfill promise with x.
         else
             promise.resolve x
         promise
 
     class Promise
         constructor: (resolver) ->
-            @state = 'pending'
+            @state = STATE.PENDING
             @onFulfilled = []
             @onRejected = []
             @onFulfilled.num = @onRejected.num = 0
             @resolved = @rejected = no
             setTimeout =>
                 try
+                    # unCaughtError @
                     resolver and resolver.call null, @resolve, @reject
-                catch err
-                    @reject err
+                catch e
+                    @reject e
             , 0
             @
 
@@ -56,19 +121,19 @@ if process?.nextTick then setTimeout = process.nextTick
                 @onRejected.push fun: null, next: next
 
             switch @state
-                when 'fulfilled' then @_fireResolve()
-                when 'rejected' then @_fireReject()
+                when STATE.FULFILLED then @_fireResolve()
+                when STATE.REJECTED then @_fireReject()
             next
         catch: (onRejected) ->
             @then null, onRejected
-        resolve: (@value)=>
-            if @state is 'fulfilled' then return @
-            @state = 'fulfilled'
+        resolve: (@value) =>
+            if @state is STATE.FULFILLED then return @
+            @state = STATE.FULFILLED
             @_fireResolve()
             @
         reject: (@reason) =>
-            if @state is 'rejected' then return @
-            @state = 'rejected'
+            if @state is STATE.REJECTED then return @
+            @state = STATE.REJECTED
             @_fireReject()
             @
         _fireResolve: =>
@@ -108,7 +173,6 @@ if process?.nextTick then setTimeout = process.nextTick
                             rs = fun.call undefined, @reason
                             next and resolveX next, rs
                         catch e
-                            console.log "reject e"
                             next.reject e
                     @rejected = yes
                 else

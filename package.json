@@ -25,10 +25,10 @@
   },
   "homepage": "https://github.com/dracupid/light-promise",
   "devDependencies": {
-    "coffee-script": "^1.9.1",
-    "coffeelint": "^1.9.2",
-    "mocha": "^2.1.0",
-    "nokit": "^0.5.4",
-    "promises-aplus-tests": "^2.1.0"
+    "coffee-script": "^1.10.0",
+    "coffeelint": "^1.15.7",
+    "mocha": "^2.4.5",
+    "nokit": "^0.20.10",
+    "promises-aplus-tests": "^2.1.1"
   }
 }
