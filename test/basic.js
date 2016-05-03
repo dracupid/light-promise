@@ -243,6 +243,15 @@ describe('Promise', function() {
                 done()
             })
         });
+
+        it('should resolve [] when input is empty or []', function(done) {
+            Promise.all([])
+            .then(function(rs){
+                assert.ok(Array.isArray(rs))
+                assert.deepEqual(rs, []);
+                done()
+            })
+        });
     })
     describe('Asny example', function() {
         it('should be resolved after 1.5 seconds', function(done) {

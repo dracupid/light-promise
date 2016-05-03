@@ -190,8 +190,11 @@ STATE =
             p.reject reason
             p
         @all: (promises) ->
+            if not promises or promises.length is 0
+                return Promise.resolve []
+
             promise = new Promise()
-            result = new Array promise.length
+            result = new Array promises.length
             finish = 0
             done = false
             for p, i in promises
