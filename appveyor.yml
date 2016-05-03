@@ -1,12 +1,37 @@
-build: false
+#---------------------------------#
+#      general configuration      #
+#---------------------------------#
+branches:
+  only:
+    - master
+  except:
+    - gh-pages
+
+skip_tags: true
+
+#---------------------------------#
+#    environment configuration    #
+#---------------------------------#
+shallow_clone: true
+
+clone_depth: 1
 
 environment:
   matrix:
-    - nodejs_version: "0.10"
+    - nodejs_version: 0.12
+    - nodejs_version: 6
 
 install:
   - npm install
 
+#---------------------------------#
+#       build configuration       #
+#---------------------------------#
+build: off
+
+#---------------------------------#
+#       tests configuration       #
+#---------------------------------#
 test_script:
   - node --version
   - npm --version
