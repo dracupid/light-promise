@@ -5,7 +5,7 @@
   "main": "dist/light-promise.js",
   "scripts": {
     "test": "mocha test/basic.js && node test/promiseAPlus.js",
-    "prepublish": "coffee nofile.coffee"
+    "prepublish": "no"
   },
   "repository": {
     "type": "git",
