@@ -10,12 +10,14 @@ A Super Lightweight [Promise/A+](https://promisesaplus.com) implementation, test
 [![Build Status](https://travis-ci.org/dracupid/light-promise.svg)](https://travis-ci.org/dracupid/light-promise)
 [![Build status](https://ci.appveyor.com/api/projects/status/github/dracupid/light-promise?svg=true)](https://ci.appveyor.com/project/dracupid/light-promise)
 
+[![js-standard-style](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)
+
 ## Usage
 ### Node
 Run `npm install -S light-promise` in command line.
 Then,
 ```javascript
-var Promise = require('light-promise');
+let Promise = require('light-promise')
 ```
 ### Browser
 Download the light-promise.min.js file.
@@ -24,15 +26,15 @@ Download the light-promise.min.js file.
 
 - Add a script tag in your HTML file
 ```html
-<script type="text/javascript" src="/light-promise.js"></script>
+<script src="/light-promise.js"></script>
 ```
 -  The global variables `Promise` is available after the above script tag.
     - Notice that if the browser supports [Promise](http://devdocs.io/javascript/global_objects/promise) natively, Promise variable will keep to be the native one, which I recommand you to use.
 ```javascript
 var p = new Promise(function(resolve, reject){
     // ...
-});
-p.then(function(){});
+})
+p.then(function(){})
 ```
 > You can also use light-promise with [requirejs](http://requirejs.org/) or [browserify](http://browserify.org/) as well.
 
