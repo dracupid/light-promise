@@ -1,4 +1,4 @@
-Promise = require('../light-promise.es6');
+Promise = require('../dist/light-promise');
 
 Promise.resolved = Promise.resolve
 Promise.rejected = Promise.reject
