@@ -37,23 +37,23 @@ STATE =
     resolveX = (promise, x) ->
         # 2.3.1 If promise and x refer to the same object, reject promise with a TypeError as the reason
         if promise is x
-            promise.reject new TypeError()
+            promise._fireReject new TypeError()
         # 2.3.2 If x is a promise, adopt its state:
         else if x instanceof Promise
             switch x.state
                 # 2.3.2.1 If x is pending, promise must remain pending until x is fulfilled or rejected.
                 when STATE.PENDING then x.then promise.resolve, promise.reject
                 # 2.3.2.2 If/when x is fulfilled, fulfill promise with the same value.
-                when STATE.FULFILLED then promise.resolve x.value
+                when STATE.FULFILLED then promise._fireResolve x.value
                 # 2.3.2.3 If/when x is rejected, reject promise with the same reason.
-                when STATE.REJECTED then promise.reject x.reason
+                when STATE.REJECTED then promise._fireReject x.reason
         # 2.3.3 Otherwise, if x is an object or function,
         else if isObj(x) or isFun(x)
             # 2.3.3.1 Let then be x.then.
             try xThen = x.then
             # 2.3.3.2 If retrieving the property x.then results in a thrown exception e, reject promise with e as the reason.
             catch e
-                return promise.reject e
+                return promise._fireReject e
 
             # 2.3.3.3 If then is a function, call it with x as this, first argument resolvePromise,
             # and second argument rejectPromise, where:
@@ -71,7 +71,7 @@ STATE =
                 rejectPromise = (r) ->
                     if called then return
                     called = yes
-                    promise.reject r
+                    promise._fireReject r
 
                 try xThen.call x, resolvePromise, rejectPromise
                 # 2.3.3.3.4 If calling then throws an exception e,
@@ -79,15 +79,14 @@ STATE =
                     # 2.3.3.3.4.1 If resolvePromise or rejectPromise have been called, ignore it.
                     if called then return
                     # 2.3.3.3.4.2 Otherwise, reject promise with e as the reason.
-                    else promise.reject e
+                    else promise._fireReject e
 
             # 2.3.3.4 If then is not a function, fulfill promise with x.
             else
-                promise.resolve x
+                promise._fireResolve x
         # 2.3.4 If x is not an object or function, fulfill promise with x.
         else
-            promise.resolve x
-        promise
+            promise._fireResolve x
 
     class Promise
         constructor: (resolver) ->
@@ -95,7 +94,6 @@ STATE =
             @onFulfilled = []
             @onRejected = []
             @onFulfilled.num = @onRejected.num = 0
-            @resolved = @rejected = no
             setTimeout =>
                 try
                     # unCaughtError @
@@ -121,22 +119,24 @@ STATE =
                 @onRejected.push fun: null, next: next
 
             switch @state
-                when STATE.FULFILLED then @_fireResolve()
-                when STATE.REJECTED then @_fireReject()
+                when STATE.FULFILLED then @_fireResolve @value
+                when STATE.REJECTED then @_fireReject @reason
             next
         catch: (onRejected) ->
             @then null, onRejected
-        resolve: (@value) =>
+
+        resolve: (value) =>
             if @state is STATE.FULFILLED then return @
-            @state = STATE.FULFILLED
-            @_fireResolve()
+            resolveX @, value
             @
-        reject: (@reason) =>
+
+        reject: (reason) =>
             if @state is STATE.REJECTED then return @
-            @state = STATE.REJECTED
-            @_fireReject()
+            @_fireReject reason
             @
-        _fireResolve: =>
+
+        _fireResolve: (@value) =>
+            @state = STATE.FULFILLED
             setTimeout =>
                 next = null
                 _onFullfilled = [].concat @onFulfilled
@@ -158,7 +158,8 @@ STATE =
                     for ful in _onFullfilled
                         ful.next.resolve @value
             , 0
-        _fireReject: =>
+        _fireReject: (@reason) =>
+            @state = STATE.REJECTED
             setTimeout =>
                 next = null
                 _onRejected = [].concat @onRejected
@@ -174,7 +175,6 @@ STATE =
                             next and resolveX next, rs
                         catch e
                             next.reject e
-                    @rejected = yes
                 else
                     @onRejected.length = 0
                     for rej in _onRejected

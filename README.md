@@ -1,7 +1,10 @@
+<a href="http://promisesaplus.com/">
+    <img src="http://promisesaplus.com/assets/logo-small.png" alt="Promises/A+ logo"
+         title="Promises/A+ 1.1 compliant" align="right" />
+</a>
+
 # light-promise
 A Super Lightweight [Promise/A+](https://promisesaplus.com) implementation, tested by [promises-tests](https://github.com/promises-aplus/promises-tests)
-
-> TODO: Test case 2.3.3 failed by now.
 
 [![NPM version](https://badge.fury.io/js/light-promise.svg)](http://badge.fury.io/js/light-promise)
 [![Build Status](https://travis-ci.org/dracupid/light-promise.svg)](https://travis-ci.org/dracupid/light-promise)
