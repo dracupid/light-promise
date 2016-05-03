@@ -1,6 +1,7 @@
 ###
     A Super Lightweight promise/A+ implementation
     @author: Draucpid
+    NOTICE: This file is deprecated
 ###
 "use strict"
 
@@ -151,7 +152,7 @@ STATE =
                             next and resolveX next, rs
                         catch e
                             next.reject e
-                    @fulfilled = yes
+#                    @fulfilled = yes
                 else
                     @onFulfilled.length = 0
                     for ful in _onFullfilled

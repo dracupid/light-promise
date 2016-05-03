@@ -30,3 +30,4 @@ node_modules
 .nobone
 .coffee
 dist
+.idea

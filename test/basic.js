@@ -1,6 +1,5 @@
 var assert = require("assert");
-require('coffee-script/register');
-var Promise = require("../light-promise")
+var Promise = require("../dist/light-promise")
 describe('Promise', function() {
     describe('#constructor', function() {
         it('should return an object with method then and catch', function() {
@@ -28,19 +27,13 @@ describe('Promise', function() {
             promise.then(function(rs) {
                 assert.equal(rs, 13578)
                 done()
-            }, function(err) {
-                assert.equal(typeof err, typeof undefined)
-                done()
-            });
+            }, done);
         })
         it('should print the value rejected', function(done) {
             var promise = new Promise(function(resolve, reject) {
                 reject("abc")
             })
-            promise.then(function(rs) {
-                assert.equal(typeof rs, typeof undefined);
-                done()
-            }, function(err) {
+            promise.then(done, function(err) {
                 assert.equal(err, "abc");
                 done()
             });
