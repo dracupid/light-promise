@@ -49,6 +49,7 @@ p.then(function(){});
 `Promise.resolve(Dynamic value)`<br/>
 `Promise.reject(Dynamic reason)`<br/>
 `Promise.all(Array promises)` --extended method<br/>
+`Promise.race(Array promises)` --extended method<br/>
 
 ## Test
 ```

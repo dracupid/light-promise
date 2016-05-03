@@ -267,6 +267,61 @@ describe('Promise', function() {
             })
         });
     })
+
+    describe('#Promise.race', function() {
+        it('should resolve when one of the promises is resolved', function(done) {
+            var arr = [1, 2, 3],
+                promise1 = new Promise(function(re, rj){
+                    setTimeout(function() {
+                        re(arr[0])
+                    }, 100)
+
+                }),
+                promise2 = new Promise(function(re, rj){
+                    setTimeout(function() {
+                        re(arr[1])
+                    }, 400)
+                }),
+                promise3 = new Promise(function(re, rj){
+                    setTimeout(function() {
+                        re(arr[2])
+                    }, 800)
+                })
+            Promise.all([promise1, promise2, promise3])
+            .then(function(rs){
+                assert.deepEqual(rs, arr);
+                done()
+            }).catch(done)
+        });
+
+        it('should reject when one of the promises is rejected', function(done) {
+            var arr = [1, 2, 3],
+                promise1 = new Promise(function(re, rj){
+                    setTimeout(function() {
+                        re(arr[0])
+                    }, 400)
+                }),
+                promise2 = new Promise(function(re, rj){
+                    setTimeout(function() {
+                        rj(arr[1])
+                    }, 100)
+                }),
+                promise3 = new Promise(function(re, rj){
+                    setTimeout(function() {
+                        re(arr[2])
+                    }, 800)
+                })
+            Promise.all([promise1, promise2, promise3])
+            .then(function(rs){
+                assert.equal(typeof rs, typeof undefined)
+                done()
+            }, function(err){
+                assert.equal(err, arr[1])
+                done()
+            })
+        });
+    })
+
     describe('Asny example', function() {
         it('should be resolved after 1.5 seconds', function(done) {
             var promise = new Promise(function(re, rj){

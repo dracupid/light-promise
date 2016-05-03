@@ -129,7 +129,6 @@ STATE =
             if @state is STATE.FULFILLED then return @
             resolveX @, value
             @
-
         reject: (reason) =>
             if @state is STATE.REJECTED then return @
             @_fireReject reason
@@ -189,17 +188,29 @@ STATE =
             if not promises or promises.length is 0
                 return Promise.resolve []
 
-            promise = new Promise()
-            result = new Array promises.length
-            finish = 0
-            done = false
-            for p, i in promises
-                do (i) ->
+            new Promise (resolve, reject) ->
+                result = new Array promises.length
+                finish = 0
+                done = false
+                for p, i in promises
+                    do (i) ->
+                        p.then (rs) ->
+                            result[i] = rs
+                            if ++finish is promises.length and not done
+                                resolve result
+                        , (err) ->
+                            done = true
+                            reject err
+
+        @race: (promises) ->
+            new Promise (resolve, reject) ->
+                done = false
+                for p in promises
                     p.then (rs) ->
-                        result[i] = rs
-                        if ++finish is promises.length and not done
-                            promise.resolve result
+                        if not done
+                            done = true
+                            resolve rs
                     , (err) ->
-                        done = true
-                        promise.reject err
-            promise
+                        if not done
+                            done = true
+                            reject err
