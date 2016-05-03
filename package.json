@@ -7,7 +7,7 @@
     "test": "mocha test/basic.js && node test/promiseAPlus.js && promises-es6-tests test/promiseAPlus.js",
     "prepublish": "npm run build",
     "lint": "standard light-promise.es6 | snazzy",
-    "build": "npm run lint && babel light-promise.es6 > dist/light-promise.js"
+    "build": "mkdir -p dist && npm run lint && babel light-promise.es6 > dist/light-promise.js"
   },
   "repository": {
     "type": "git",
