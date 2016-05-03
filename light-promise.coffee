@@ -7,18 +7,18 @@
 isFun = (a) -> typeof a is 'function'
 isObj = (a) -> a and typeof a is 'object'
 
-if process?.nextTick then setTimeout = process.nextTick
+$nextTick = if process?.nextTick then process.nextTick else setTimeout
 
-redStart = '\u001b[31m'
-redEnd = '\u001b[39m'
+# redStart = '\u001b[31m'
+# redEnd = '\u001b[39m'
 
-unCaughtError = (promise) ->
-    setTimeout ->
-        if promise.state is STATE.REJECTED and not promise.onRejected.length
-            reason = promise.reason.stack or promise.reason
-            console.error redStart, "Possibly unhandled error: ", reason, redEnd
-            throw promise.reason
-    , 0
+# unCaughtError = (promise) ->
+#     $nextTick ->
+#         if promise.state is STATE.REJECTED and not promise.onRejected.length
+#             reason = promise.reason.stack or promise.reason
+#             console.error redStart, "Possibly unhandled error: ", reason, redEnd
+#             throw promise.reason
+#     , 0
 
 STATE =
     PENDING: 0
@@ -94,7 +94,7 @@ STATE =
             @onFulfilled = []
             @onRejected = []
             @onFulfilled.num = @onRejected.num = 0
-            setTimeout =>
+            $nextTick =>
                 try
                     # unCaughtError @
                     resolver and resolver.call null, @resolve, @reject
@@ -137,7 +137,7 @@ STATE =
 
         _fireResolve: (@value) =>
             @state = STATE.FULFILLED
-            setTimeout =>
+            $nextTick =>
                 next = null
                 _onFullfilled = [].concat @onFulfilled
                 if @onFulfilled.num
@@ -160,7 +160,7 @@ STATE =
             , 0
         _fireReject: (@reason) =>
             @state = STATE.REJECTED
-            setTimeout =>
+            $nextTick =>
                 next = null
                 _onRejected = [].concat @onRejected
                 if @onRejected.num
@@ -182,13 +182,9 @@ STATE =
             , 0
 
         @resolve: (value) ->
-            p = new Promise()
-            p.resolve value
-            p
+            new Promise().resolve(value)
         @reject: (reason) ->
-            p = new Promise()
-            p.reject reason
-            p
+            new Promise().reject(reason)
         @all: (promises) ->
             if not promises or promises.length is 0
                 return Promise.resolve []
