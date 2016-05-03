@@ -11,7 +11,7 @@ A Super Lightweight [Promise/A+](https://promisesaplus.com) implementation, test
 [![Build status](https://ci.appveyor.com/api/projects/status/github/dracupid/light-promise?svg=true)](https://ci.appveyor.com/project/dracupid/light-promise)
 
 ## Usage
-### Node/io
+### Node
 Run `npm install -S light-promise` in command line.
 Then,
 ```javascript
