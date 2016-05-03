@@ -4,7 +4,7 @@
   "description": "A Super Lightweight promise/A+ implementation",
   "main": "dist/light-promise.js",
   "scripts": {
-    "test": "mocha test/basic.js && node test/promiseAPlus.js",
+    "test": "mocha test/basic.js && node test/promiseAPlus.js && promises-es6-tests test/promiseAPlus.js",
     "prepublish": "no"
   },
   "repository": {
@@ -29,6 +29,7 @@
     "coffeelint": "^1.15.7",
     "mocha": "^2.4.5",
     "nokit": "^0.20.12",
-    "promises-aplus-tests": "^2.1.1"
+    "promises-aplus-tests": "^2.1.1",
+    "promises-es6-tests": "^0.5.0"
   }
 }
