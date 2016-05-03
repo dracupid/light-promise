@@ -84,6 +84,20 @@ describe('Promise', function() {
                 done()
             })
         })
+        it('promise1 which resolves a promise2 should resolve the promise2 resolved value', function(done) {
+            var promise1 = new Promise(function (resolve) {
+                setTimeout(function() {
+                    resolve(1)
+                }, 500)
+            })
+
+            var promise2 = Promise.resolve(promise1);
+            promise2.then(function (v) {
+                assert.equal(v, 1)
+                done()
+            })
+            .catch(function(err) {done(err)})
+        })
     });
     describe('#Promise.resolve and Promise.reject', function() {
         it("should reolve the value as a Promise", function(done) {
@@ -258,7 +272,7 @@ describe('Promise', function() {
             var promise = new Promise(function(re, rj){
                     setTimeout(function(){
                         re('good')
-                    }, 1500)
+                    }, 500)
                 })
             promise.then(function(rs){
                 assert.equal(rs, 'good')
@@ -272,7 +286,7 @@ describe('Promise', function() {
             var promise = new Promise(function(re, rj){
                     setTimeout(function(){
                         rj('bad')
-                    }, 1500)
+                    }, 500)
                 })
             promise.then(function(rs){
                 assert.equal(typeof rs, typeof undefined)
