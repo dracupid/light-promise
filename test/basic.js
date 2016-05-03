@@ -1,5 +1,5 @@
 var assert = require("assert");
-var Promise = require("../dist/light-promise")
+var Promise = require("../light-promise.es6")
 describe('Promise', function() {
     describe('#constructor', function() {
         it('should return an object with method then and catch', function() {

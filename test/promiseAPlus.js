@@ -1,5 +1,4 @@
-require('coffee-script/register');
-Promise = require('../light-promise');
+Promise = require('../light-promise.es6');
 
 Promise.resolved = Promise.resolve
 Promise.rejected = Promise.reject
