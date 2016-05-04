@@ -1,3 +1,4 @@
+'use strict'
 /**
  * A Super Lightweight promise/A+ implementation
  * @author: Draucpid
@@ -6,13 +7,26 @@
 let isFun = a => typeof a === 'function'
 let isObj = a => a && typeof a === 'object'
 
-let $nextTick = (process && process.nextTick) ? process.nextTick : setTimeout
+let $nextTick = process ? process.nextTick : setTimeout
 
 const STATE = {
   PENDING: 0,
   FULFILLED: 2,
   REJECTED: 4
+}
+
+let ensureCallOn = function (tobe, msg) {
+  if (this !== tobe) {
+    throw new TypeError(msg)
+  }
+}
+
+let ensureCallAs = function (superclass, msg) {
+  if (this.constructor !== superclass) {
+    throw new TypeError(msg)
+  }
 };
+
 (function (root, factory) {
   if (typeof module === 'object' && typeof module.exports === 'object') {
     module.exports = factory(root)
@@ -96,7 +110,15 @@ const STATE = {
   }
 
   class Promise {
-    constructor (resolver) {
+    constructor (executor) {
+      if (executor && !isFun(executor)) {
+        throw new TypeError('executor must be a function')
+      }
+
+      if (this.state != null) {
+        throw new TypeError('promise create error')
+      }
+
       this.state = STATE.PENDING
       this.onFulfilled = []
       this.onRejected = []
@@ -104,41 +126,42 @@ const STATE = {
       this.resolve = this.resolve.bind(this)
       this.reject = this.reject.bind(this)
 
-      $nextTick(() => {
-        try {
-          resolver && resolver(this.resolve, this.reject)
-        } catch (e) {
-          this.reject(e)
-        }
-      }, 0)
+      try {
+        executor && executor(this.resolve, this.reject)
+      } catch (e) {
+        this.reject(e)
+      }
       return this
     }
 
     then (onFulfilled, onRejected) {
+      ensureCallAs.call(this, Promise, 'then should be called on a promise object')
       let next = new Promise()
 
-      if (isFun(onFulfilled)) {
-        this.onFulfilled.num += 1
-        this.onFulfilled.push({fun: onFulfilled, next})
-      } else {
-        this.onFulfilled.push({fun: null, next})
-      }
+      $nextTick(() => {
+        if (isFun(onFulfilled)) {
+          this.onFulfilled.num += 1
+          this.onFulfilled.push({fun: onFulfilled, next})
+        } else {
+          this.onFulfilled.push({fun: null, next})
+        }
 
-      if (isFun(onRejected)) {
-        this.onRejected.num += 1
-        this.onRejected.push({fun: onRejected, next})
-      } else {
-        this.onRejected.push({fun: null, next})
-      }
+        if (isFun(onRejected)) {
+          this.onRejected.num += 1
+          this.onRejected.push({fun: onRejected, next})
+        } else {
+          this.onRejected.push({fun: null, next})
+        }
 
-      switch (this.state) {
-        case STATE.FULFILLED:
-          this._fireResolve(this.value)
-          break
-        case STATE.REJECTED:
-          this._fireReject(this.reason)
-          break
-      }
+        switch (this.state) {
+          case STATE.FULFILLED:
+            this._fireResolve(this.value)
+            break
+          case STATE.REJECTED:
+            this._fireReject(this.reason)
+            break
+        }
+      })
       return next
     }
 
@@ -182,7 +205,7 @@ const STATE = {
             ful.next.resolve(this.value)
           }
         }
-      }, 0)
+      })
     }
 
     _fireReject (reason) {
@@ -215,15 +238,24 @@ const STATE = {
     }
 
     static resolve (value) {
+      ensureCallOn.call(this, Promise, 'Promise.resolve should be called on Promise')
+      if (value instanceof Promise && value.constructor === this) {
+        return value
+      }
       return new Promise().resolve(value)
     }
 
     static reject (reason) {
+      ensureCallOn.call(this, Promise, 'Promise.reject should be called on Promise')
       return new Promise().reject(reason)
     }
 
     static all (promises) {
-      if (!promises || promises.length === 0) {
+      ensureCallOn.call(this, Promise, 'Promise.all should be called on Promise')
+      if (!Array.isArray(promises)) {
+        return Promise.reject(new TypeError('Promise.all only receive an array'))
+      }
+      if (promises.length === 0) {
         return Promise.resolve([])
       }
 
@@ -232,26 +264,42 @@ const STATE = {
         let finish = 0
         let done = false
         for (let i = 0; i < promises.length; i++) {
-          let p = promises[i];
+          let cur = promises[i];
           (i =>
-            p.then(rs => {
-              result[i] = rs
-              if (++finish === promises.length && !done) {
-                resolve(result)
+            cur.then(rs => {
+              if (!done) {
+                result[i] = rs
+                if (++finish === promises.length) {
+                  done = true
+                  resolve(result)
+                }
               }
             }, err => {
-              done = true
-              reject(err)
+              if (!done) {
+                done = true
+                reject(err)
+              }
             }))(i)
         }
       })
     }
 
     static race (promises) {
+      ensureCallOn.call(this, Promise, 'Promise.race should be called on Promise')
+      if (!Array.isArray(promises)) {
+        return Promise.reject(new TypeError('Promise.race only receive an array'))
+      }
       return new Promise(function (resolve, reject) {
         let done = false
         for (let i = 0; i < promises.length; i++) {
-          promises[i].then((rs) => {
+          let cur = promises[i]
+          switch (cur.state) {
+            case STATE.FULFILLED:
+              return resolve(cur.value)
+            case STATE.REJECTED:
+              return reject(cur.reason)
+          }
+          cur.then((rs) => {
             if (!done) {
               done = true
               resolve(rs)

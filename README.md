@@ -4,7 +4,8 @@
 </a>
 
 # light-promise
-A Super Lightweight [Promise/A+](https://promisesaplus.com) implementation, tested by [promises-tests](https://github.com/promises-aplus/promises-tests) and [promises-es6-tests](https://github.com/promises-es6/promises-es6)
+A Super Lightweight [Promise/A+](https://promisesaplus.com) and [ES6-promise](http://www.ecma-international.org/ecma-262/6.0/#sec-promise-objects) implementation, tested by [promises-tests](https://github.com/promises-aplus/promises-tests) and [promises-es6-tests](https://github.com/promises-es6/promises-es6)
+> This project mainly focus on Promise/A+, with some tricks to fulfill ES6-promise standard.
 
 [![NPM version](https://badge.fury.io/js/light-promise.svg)](http://badge.fury.io/js/light-promise)
 [![Build Status](https://travis-ci.org/dracupid/light-promise.svg)](https://travis-ci.org/dracupid/light-promise)
