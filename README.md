@@ -30,7 +30,7 @@ Download the light-promise.min.js file.
 <script src="/light-promise.js"></script>
 ```
 -  The global variables `Promise` is available after the above script tag.
-    - Notice that if the browser supports [Promise](http://devdocs.io/javascript/global_objects/promise) natively, Promise variable will keep to be the native one, which I recommand you to use.
+    - Notice that if the browser supports [Promise](http://devdocs.io/javascript/global_objects/promise) natively, Promise variable will keep to be the native one, which I recommend you to use.
 ```javascript
 var p = new Promise(function(resolve, reject){
     // ...
