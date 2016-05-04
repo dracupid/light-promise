@@ -160,12 +160,12 @@ const STATE = {
       this.value = value
       this.state = STATE.FULFILLED
       $nextTick(() => {
-        let _onFullfilled = [].concat(this.onFulfilled)
+        let _onFulfilled = [].concat(this.onFulfilled)
         if (this.onFulfilled.num) {
           this.onFulfilled.length = 0
           this.onFulfilled.num = 0
-          for (let i = 0; i < _onFullfilled.length; i++) {
-            let ful = _onFullfilled[i]
+          for (let i = 0; i < _onFulfilled.length; i++) {
+            let ful = _onFulfilled[i]
             let {fun, next} = ful
             if (!fun) { return }
             try {
@@ -177,8 +177,8 @@ const STATE = {
           }
         } else {
           this.onFulfilled.length = 0
-          for (let j = 0; j < _onFullfilled.length; j++) {
-            var ful = _onFullfilled[j]
+          for (let j = 0; j < _onFulfilled.length; j++) {
+            var ful = _onFulfilled[j]
             ful.next.resolve(this.value)
           }
         }
