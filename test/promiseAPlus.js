@@ -1,20 +1,24 @@
-Promise = require('../dist/light-promise');
+MyPromise = require('../dist/light-promise')
+assert = require('assert')
 
-Promise.resolved = Promise.resolve
-Promise.rejected = Promise.reject
-Promise.deferred = function(){
-    promise = new Promise()
-    return {
-        promise: promise,
-        resolve: function(value){
-            promise.resolve(value)
-        },
-        reject: function(reason){
-            promise.reject(reason)
-        }
-    }
+module.exports = {
+  resolved: MyPromise.resolve.bind(MyPromise),
+  rejected: MyPromise.reject.bind(MyPromise),
+  deferred: function () {
+    var defer;
+    defer = {};
+    defer.promise = new MyPromise(function (resolve, reject) {
+      defer.resolve = resolve;
+      return defer.reject = reject;
+    });
+    return defer;
+  },
+  defineGlobalPromise: function (global) {
+    global.Promise = MyPromise
+    global.assert = assert
+  },
+
+  removeGlobalPromise: function (global) {
+    delete global.Promise;
+  }
 }
-
-var promisesAplusTests = require("promises-aplus-tests");
-promisesAplusTests(Promise, function (err) {});
-

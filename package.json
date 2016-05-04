@@ -4,7 +4,7 @@
   "description": "A Super Lightweight promise/A+ implementation",
   "main": "dist/light-promise.js",
   "scripts": {
-    "test": "mocha test/basic.js && node test/promiseAPlus.js && promises-es6-tests test/promiseAPlus.js",
+    "test": "mocha test/basic.js && promises-aplus-tests test/promiseAPlus.js && promises-es6-tests test/promiseAPlus.js",
     "prepublish": "npm run build",
     "lint": "standard light-promise.es6 | snazzy",
     "build": "mkdir -p dist && npm run lint && babel light-promise.es6 > dist/light-promise.js"
