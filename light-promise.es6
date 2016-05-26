@@ -33,7 +33,7 @@ let ensureCallAs = function (superclass, msg) {
   } else if (typeof define === 'function' && define.amd) {
     define('light-promise', [], () => factory(root))
   } else {
-    root.Promise != null && (root.Promise = factory(root))
+    root.Promise == null && (root.Promise = factory(root))
   }
 })(this, function (root) {
   // 2.3 The Promise Resolution Procedure
