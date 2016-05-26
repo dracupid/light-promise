@@ -1,6 +1,6 @@
 {
   "name": "light-promise",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A Super Lightweight promise/A+ implementation",
   "main": "dist/light-promise.js",
   "scripts": {
