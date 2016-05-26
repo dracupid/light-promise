@@ -7,7 +7,7 @@
 let isFun = a => typeof a === 'function'
 let isObj = a => a && typeof a === 'object'
 
-let $nextTick = process ? process.nextTick : setTimeout
+let $nextTick = typeof process === 'object' ? process.nextTick : setTimeout
 
 const STATE = {
   PENDING: 0,
@@ -35,7 +35,7 @@ let ensureCallAs = function (superclass, msg) {
   } else {
     root.Promise != null && (root.Promise = factory(root))
   }
-})(this, function () {
+})(this, function (root) {
   // 2.3 The Promise Resolution Procedure
   let resolveX = function (promise, x) {
     // 2.3.1 If promise and x refer to the same object, reject promise with a TypeError as the reason
